@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
+	"net/url"
 	"time"
 )
 
@@ -16,7 +18,7 @@ func (acc *account) outputPassword() {
 	fmt.Println(acc.login, acc.password, acc.url)
 }
 
-func (acc *account) generatePassword(n int) string {
+func (acc *account) generatePassword(n int) {
 	res := make([]rune, n)
 	for i := range res {
 		res[i] = letterRunes[rand.Intn(len(letterRunes))]
@@ -24,11 +26,26 @@ func (acc *account) generatePassword(n int) string {
 	acc.password = string(res)
 }
 
-func newAccount(login, password, url string) *account {
-	return &account{login, password, url}
+func newAccount(login, password, urlString string) (*account, error) {
+	if login == "" {
+		return nil, errors.New("invalid login")
+	}
+	_, err := url.ParseRequestURI(urlString)
+	if err != nil {
+		return nil, errors.New("invalid url")
+	}
+	newAcc := &account{
+		login:    login,
+		password: password,
+		url:      urlString,
+	}
+	if password == "" {
+		newAcc.generatePassword(12)
+	}
+	return newAcc, nil
 }
 
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxezABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-!@#$%^&*()_+-=")
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-!@#$%^&*()_+-=")
 
 func main() {
 	rand.Seed(time.Now().UnixNano())
@@ -36,14 +53,17 @@ func main() {
 	password := promptData("Введите пароль")
 	url := promptData("Введите URL")
 
-	myAccount := newAccount(login, password, url)
-	myAccount.generatePassword(12)
+	myAccount, err := newAccount(login, password, url)
+	if err != nil {
+		fmt.Println("Неверный формат url")
+		return
+	}
 	myAccount.outputPassword()
 }
 
 func promptData(prompt string) string {
 	fmt.Print(prompt + ": ")
 	var input string
-	fmt.Scan(&input)
+	fmt.Scanln(&input)
 	return input
 }
