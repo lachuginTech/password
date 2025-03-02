@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"math/rand"
 	"password/account"
+	"password/files"
 	"time"
 )
 
 func main() {
+	files.WriteFile("привет я файл", "file.txt")
 	rand.Seed(time.Now().UnixNano())
 	login := promptData("Введите логин")
 	password := promptData("Введите пароль")

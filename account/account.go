@@ -25,7 +25,8 @@ type AccountWithTimeStamp struct {
 
 func (acc *Account) OutputPassword() {
 	color.Cyan(acc.login)
-	fmt.Println(acc.login, acc.password, acc.url)
+	fmt.Println(acc.password)
+	fmt.Println(acc.url)
 }
 
 func (acc *Account) generatePassword(n int) {
