@@ -1,7 +1,6 @@
 package account
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/fatih/color"
@@ -20,26 +19,18 @@ type Account struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (acc *Account) OutputPassword() {
-	color.Cyan(acc.Login)
-	fmt.Println(acc.Password)
-	fmt.Println(acc.Url)
+func (vault *Account) OutputPassword() {
+	color.Cyan(vault.Login)
+	fmt.Println(vault.Password)
+	fmt.Println(vault.Url)
 }
 
-func (acc *Account) ToBytes() ([]byte, error) {
-	file, err := json.Marshal(acc)
-	if err != nil {
-		return nil, err
-	}
-	return file, nil
-}
-
-func (acc *Account) generatePassword(n int) {
+func (vault *Account) generatePassword(n int) {
 	res := make([]rune, n)
 	for i := range res {
 		res[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
-	acc.Password = string(res)
+	vault.Password = string(res)
 }
 
 func NewAccount(login, password, urlString string) (*Account, error) {

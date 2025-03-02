@@ -1,1 +1,12 @@
-{"login":"arz","password":"Ja2=t1=dADoX","url":"https://ya.ru","createdAt":"2025-03-02T17:22:49.5215658+03:00","updatedAt":"2025-03-02T17:22:49.5215658+03:00"}
+{
+  "accounts": [
+    {
+      "login": "asd",
+      "password": "MmT^_7wjk8In",
+      "url": "https://ya.com",
+      "createdAt": "2025-03-02T18:05:18.7945184+03:00",
+      "updatedAt": "2025-03-02T18:05:18.7945184+03:00"
+    }
+  ],
+  "updatedAt": "2025-03-02T18:05:18.7945184+03:00"
+}

@@ -56,12 +56,14 @@ func createAccount() {
 		fmt.Println("Неверный формат url")
 		return
 	}
-	file, err := myAccount.ToBytes()
+	vault := account.NewVault()
+	vault.AddAccount(*myAccount)
+	data, err := vault.ToBytes()
 	if err != nil {
 		fmt.Println("Не удалось преобразовать данные")
 		return
 	}
-	files.WriteFile(file, "data.json")
+	files.WriteFile(data, "data.json")
 }
 
 func promptData(prompt string) string {

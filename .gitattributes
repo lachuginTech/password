@@ -1,4 +1,2 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-./password.exe
-./go_build_main_go.exe
