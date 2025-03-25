@@ -19,7 +19,7 @@ type Account struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func (vault *Account) OutputPassword() {
+func (vault *Account) Output() {
 	color.Cyan(vault.Login)
 	fmt.Println(vault.Password)
 	fmt.Println(vault.Url)

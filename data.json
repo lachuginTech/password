@@ -1,12 +1,2 @@
 {
-  "accounts": [
-    {
-      "login": "asd",
-      "password": "MmT^_7wjk8In",
-      "url": "https://ya.com",
-      "createdAt": "2025-03-02T18:05:18.7945184+03:00",
-      "updatedAt": "2025-03-02T18:05:18.7945184+03:00"
-    }
-  ],
-  "updatedAt": "2025-03-02T18:05:18.7945184+03:00"
-}
+  "accounts":[{"login":"asd","password":"MmT^_7wjk8In","url":"https://ya.com","createdAt":"2025-03-02T18:05:18.7945184+03:00","updatedAt":"2025-03-02T18:05:18.7945184+03:00"},{"login":"wsd","password":"D(F*OOPH1r9^","url":"http:ya.ru","createdAt":"2025-03-25T11:09:52.0840323+03:00","updatedAt":"2025-03-25T11:09:52.0840323+03:00"},{"login":"vladimir","password":"-s5@#P\u0026c*SUU","url":"https://lachugin.com","createdAt":"2025-03-25T11:11:14.3973044+03:00","updatedAt":"2025-03-25T11:11:14.3973044+03:00"}],"updatedAt":"2025-03-25T11:11:14.3973044+03:00"}
