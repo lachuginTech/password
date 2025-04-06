@@ -2,38 +2,62 @@ package account
 
 import (
 	"encoding/json"
-	"github.com/fatih/color"
-	"password/files"
+	"password/encrypter"
+	"password/output"
 	"strings"
 	"time"
 )
+
+type Db interface {
+	Read() ([]byte, error)
+	Write([]byte)
+}
 
 type Vault struct {
 	Accounts  []Account `json:"accounts"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-func NewVault() *Vault {
-	file, err := files.ReadFile("data.json")
-	if err != nil {
-		return &Vault{
-			Accounts:  []Account{},
-			UpdatedAt: time.Now(),
-		}
-	}
-	var vault Vault
-	err = json.Unmarshal(file, &vault)
-	if err != nil {
-		color.Blue(err.Error())
-		return &Vault{
-			Accounts:  []Account{},
-			UpdatedAt: time.Now(),
-		}
-	}
-	return &vault
+type VaultWithDb struct {
+	Vault
+	db  Db
+	enc encrypter.Encrypter
 }
 
-func (vault *Vault) DeleteAccountByUrl(url string) bool {
+func NewVault(db Db, enc encrypter.Encrypter) *VaultWithDb {
+	file, err := db.Read()
+	if err != nil {
+		return &VaultWithDb{
+			Vault: Vault{
+				Accounts:  []Account{},
+				UpdatedAt: time.Now(),
+			},
+			db:  db,
+			enc: enc,
+		}
+	}
+	data := enc.Decrypt(file)
+	var vault Vault
+	err = json.Unmarshal(data, &vault)
+	if err != nil {
+		output.PrintError("Не улаорст разобрать файл data.vault")
+		return &VaultWithDb{
+			Vault: Vault{
+				Accounts:  []Account{},
+				UpdatedAt: time.Now(),
+			},
+			db:  db,
+			enc: enc,
+		}
+	}
+	return &VaultWithDb{
+		Vault: vault,
+		db:    db,
+		enc:   enc,
+	}
+}
+
+func (vault *VaultWithDb) DeleteAccountByUrl(url string) bool {
 	var accounts []Account
 	isDeleted := false
 	for _, account := range vault.Accounts {
@@ -49,10 +73,10 @@ func (vault *Vault) DeleteAccountByUrl(url string) bool {
 	return isDeleted
 }
 
-func (vault *Vault) FindAccountsByUrl(url string) []Account {
+func (vault *VaultWithDb) FindAccounts(str string, checker func(Account, string) bool) []Account {
 	var accounts []Account
 	for _, account := range vault.Accounts {
-		isMatched := strings.Contains(account.Url, url)
+		isMatched := checker(account, str)
 		if isMatched {
 			accounts = append(accounts, account)
 		}
@@ -60,7 +84,7 @@ func (vault *Vault) FindAccountsByUrl(url string) []Account {
 	return accounts
 }
 
-func (vault *Vault) AddAccount(acc Account) {
+func (vault *VaultWithDb) AddAccount(acc Account) {
 	vault.Accounts = append(vault.Accounts, acc)
 	vault.save()
 }
@@ -73,11 +97,12 @@ func (vault *Vault) ToBytes() ([]byte, error) {
 	return file, nil
 }
 
-func (vault *Vault) save() {
+func (vault *VaultWithDb) save() {
 	vault.UpdatedAt = time.Now()
-	data, err := vault.ToBytes()
+	data, err := vault.Vault.ToBytes()
+	encData := vault.enc.Encrypt(data)
 	if err != nil {
-		color.Red(err.Error())
+		output.PrintError(err)
 	}
-	files.WriteFile(data, "data.json")
+	vault.db.Write(encData)
 }
